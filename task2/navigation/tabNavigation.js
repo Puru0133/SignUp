@@ -32,18 +32,7 @@ export function TabNavigation() {
             <HomeIcon name="home" color={color} size={size} />
           )
         }} />
-        {/* <Tab.Screen name="Categories" component={CategoryScreen} options={{
-            title: "All Categories", headerRight: () => (
-              <View style={{ flex: 1, flexDirection: "row", alignItems: "center", padding: 15 }}>
-                <SearchIcon name="search" size={18} style={{ paddingRight: 20, color: "black" }} onPress={() => Alert.alert("Message", "Search Clicked!")} />
-                <MicIcon name="microphone" size={22} style={{ color: "black" }} onPress={() => Alert.alert("Message", "MicroPhone Clicked!")} />
-              </View>
-            ),
 
-            tabBarIcon: ({ color, size, focused }) => (
-              <Image style={{ height: 20, width: 20, tintColor: focused ? "rgb(0, 122, 255)" : "dimgray" }} source={IMAGE.CategoryIcon} />
-            )
-          }} /> */}
         <Tab.Screen name="Categories" component={CategoryScreen} options={{
           title: "All Categories", headerRight: () => (
             <View style={{ flex: 1, flexDirection: "row", alignItems: "center", padding: 15 }}>
@@ -72,16 +61,22 @@ export function TabNavigation() {
           )
         }} />
       </Tab.Navigator>
-      {/* <Stack.Screen name='CategoryScreen' component={CategoryScreen} options={{ headerShown: false}}/>
-        <Stack.Screen name='ContentScreen' component={ContentItems} options={{headerRight : () => (
-                    <Image style={{ tintColor: "black"}} source={IMAGE.CartIcon} />
-                ), headerTitle : () => (
-                    <View style={{flexDirection : "row", borderWidth : 1, paddingEnd : 120, borderRadius : 60, backgroundColor : "white", paddingVertical : 1}}>
-                        <SearchIcon name="search" size={18} style={{ color: "black" , paddingVertical : 15, paddingLeft : 5}} onPress={() => Alert.alert("Message", "Search Clicked!")} />
-                        <TextInput placeholder='Search for Products'></TextInput>
-                    </View>
-                ), title : '', headerStyle : {backgroundColor : "#D8E7FE", paddingVertical : 10}}}/> */}
-      {/* </NavigationContainer> */}
     </>
   )
 }
+
+
+
+
+{/* <Tab.Screen name="Categories" component={CategoryScreen} options={{
+            title: "All Categories", headerRight: () => (
+              <View style={{ flex: 1, flexDirection: "row", alignItems: "center", padding: 15 }}>
+                <SearchIcon name="search" size={18} style={{ paddingRight: 20, color: "black" }} onPress={() => Alert.alert("Message", "Search Clicked!")} />
+                <MicIcon name="microphone" size={22} style={{ color: "black" }} onPress={() => Alert.alert("Message", "MicroPhone Clicked!")} />
+              </View>
+            ),
+
+            tabBarIcon: ({ color, size, focused }) => (
+              <Image style={{ height: 20, width: 20, tintColor: focused ? "rgb(0, 122, 255)" : "dimgray" }} source={IMAGE.CategoryIcon} />
+            )
+          }} /> */}

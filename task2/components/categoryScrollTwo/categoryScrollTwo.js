@@ -29,19 +29,6 @@ export function CategoryScrooTwoView({ productData, getMainData }) {
 
     return (
         <ScrollView style={CategoryStyle.scrollViewTwo}>
-            {/* {
-                getMainData.data.map((value, index) => (
-                    <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 0}} colors={['white', '#F0F2F5', '#c1d5f5']} >
-           <View style={ScrollTwoStyle.upperView}>
-               <View style={ScrollTwoStyle.parentText}>
-               <Text style={ScrollTwoStyle.upperText}>{value.text}</Text>
-                <ArrowIcon name="right" size={15} style={{ color: "blue" , paddingTop : 42}} onPress={() => Alert.alert("Message", "Yes Clicked!")} />
-               </View>
-                <Image style={ScrollTwoStyle.upperImage} source={value.image} />
-            </View>
-           </LinearGradient>
-                ))
-            } */}
             {
                 ForYouData.map((val, index) => (
                     <>
@@ -99,9 +86,6 @@ export function CategoryScrooTwoView({ productData, getMainData }) {
                                     </TouchableOpacity>
                                 )}
                             </View>
-                            {/* <View  style={ScrollTwoStyle.innerContainer} key={val.id}> */}
-
-                            {/* </View> */}
                         </View>
                     </>
 
