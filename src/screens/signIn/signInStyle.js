@@ -71,6 +71,12 @@ const styles = StyleSheet.create({
         borderColor: "#DBE3FF",
         backgroundColor: "white"
     },
+    errorStyle: {
+        color: "red",
+        // marginLeft: -10,
+        paddingBottom: 10,
+        marginLeft: 4
+    },
     signInViewBtn: {
         paddingHorizontal: 142,
         paddingVertical: 20,

@@ -11,33 +11,14 @@ import DatePicker from 'react-native-date-picker'
 import { Dropdown } from 'react-native-element-dropdown';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useNavigation } from '@react-navigation/native';
 import { MultiSelect } from 'react-native-element-dropdown';
-import { UseDispatch, useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { userPayload } from "../../store/userSlice";
+import Modal from "react-native-modal";
+import * as ImagePicker from 'react-native-image-picker';
 
-const validateSchema = Yup.object().shape({
-    firstName: Yup.string().required('FirstName is Required').label('FirstName'),
-    lastName: Yup.string().optional('Name is Required').label('Name'),
-    email: Yup.string().email('Please enter valid email').required("Email is Required").label('email'),
-    password: Yup.string().matches(/\w*[a-z]\w*/, 'Password must have a small letter')
-        .matches(/\w*[A-Z]\w*/, 'Password must have a capital letter')
-        .matches(/\d/, "Password must have a number")
-        .min(8, ({ min }) => `Password must be at least ${min} characters`)
-        .required('Password is Required').label('Password'),
-    confirmPassword: Yup.string()
-        .oneOf([Yup.ref('password')], 'Passwords must match')
-        .required('Confirm Password is Required')
-        .label('Confirm Password'),
-    checkBox: Yup.bool().oneOf([true], 'You must agree to the terms and conditions'),
-    option: Yup.string().required('Select One Option'),
-    DOB: Yup.string().required("Select Date").label("Date"),
-    //     dropdownItems: Yup.array()
-    //         .min(2, 'Select at least two items')
-    //         .required('Please select at least two items'),
-    dropDownItems: Yup.mixed().test(2, "Must have at least one checked", value => value.length >= 2)
-})
 
 const genderData = [
     {
@@ -68,33 +49,106 @@ const dropDownData = [
 
 ]
 
-export function SignUpScreen() {
+export function SignUpScreen({ route }) {
     const [date, setDate] = useState(new Date())
     const [open, setOpen] = useState(false)
     const [selectedRadio, setSelectedRadio] = useState();
     const [selected, setSelected] = useState([]);
+    const [isModalVisible, setModalVisible] = useState(false);
+    const [pickerResponse, setPickerResponse] = useState(null);
+    const newUserEmail = route?.params?.newUserEmail
 
+    const initialEmail = newUserEmail?.loginEmail ? newUserEmail?.loginEmail : ''
+    // console.log(newUserEmail?.loginEmail)
+
+    const usersData = useSelector(state => state.userData)
 
     const navigation = useNavigation();
     const dispatch = useDispatch();
 
+    const toggleModal = () => {
+        setModalVisible(!isModalVisible);
+    };
+
     function signInPage() {
         navigation.navigate("SignIn")
     }
-
+    const emailExists = (email) => {
+        return usersData.find(users => users.email === email)
+    }
 
     const handleConfirm = (selectDate, setFieldValue) => {
         setOpen(false);
         setDate(selectDate);
         const formattedDate = selectDate.toLocaleDateString();
         setFieldValue('DOB', formattedDate);
-        // setDateText(selectedDate.toLocaleDateString());
     };
 
+    const onImageGalleryClick = useCallback((setFieldValue) => {
+        const options = {
+            selectionLimit: 1,
+            mediaType: 'photo',
+            includeBase64: true
+        };
+
+        ImagePicker.launchImageLibrary(options, res => {
+            if (res.didCancel) {
+                console.log('User cancelled');
+            } else if (res.errorCode) {
+                console.log('ImagePickerError: ', res.errorMessage);
+            } else {
+                let imageUri = res.uri || res.assets?.[0]?.uri;
+                setPickerResponse(imageUri);
+                setFieldValue('profileImageUrl', imageUri);
+            }
+        });
+    }, []);
+
+    const onCameraPress = useCallback((setFieldValue) => {
+        const options = {
+            saveToPhotos: true,
+            mediaType: 'photo',
+            includeBase64: true,
+        };
+
+        ImagePicker.launchCamera(options, res => {
+            if (res.didCancel) {
+                console.log('User cancelled image picker');
+            } else if (res.errorCode) {
+                console.log('ImagePicker Error: ', res.errorMessage);
+            } else {
+                let imageUri = res.uri || res.assets?.[0]?.uri;
+                setPickerResponse(imageUri);
+                setFieldValue('profileImageUrl', imageUri);
+            }
+        });
+    }, []);
+
+
+
+    const validateSchema = Yup.object().shape({
+        firstName: Yup.string().required('FirstName is Required').label('FirstName'),
+        lastName: Yup.string().optional('Name is Required').label('Name'),
+        email: Yup.string().email('Please enter valid email').required("Email is Required").label('email')
+            .test('email-exists', 'User is already existing', (value) => !emailExists(value)),
+        password: Yup.string().matches(/\w*[a-z]\w*/, 'Password must have a small letter')
+            .matches(/\w*[A-Z]\w*/, 'Password must have a capital letter')
+            .matches(/\d/, "Password must have a number")
+            .min(8, ({ min }) => `Password must be at least ${min} characters`)
+            .required('Password is Required').label('Password'),
+        confirmPassword: Yup.string()
+            .oneOf([Yup.ref('password')], 'Passwords must match')
+            .required('Confirm Password is Required')
+            .label('Confirm Password'),
+        checkBox: Yup.bool().oneOf([true], 'You must agree to the terms and conditions'),
+        option: Yup.string().required('Select One Option'),
+        DOB: Yup.string().required("Select Date").label("Date"),
+        dropDownItems: Yup.mixed().test(2, "Must have at least one checked", value => value.length >= 2)
+    })
 
     return (
         <Formik
-            initialValues={{ firstName: '', lastName: '', email: '', password: '', confirmPassword: '', option: '', DOB: '', dropDownItems: [] }}
+            initialValues={{ firstName: '', lastName: '', email: initialEmail, password: '', confirmPassword: '', option: '', DOB: '', dropDownItems: [], profileImageUrl: '' }}
             validationSchema={validateSchema}
             onSubmit={values => dispatch(userPayload(values))}>
             {({
@@ -108,16 +162,27 @@ export function SignUpScreen() {
                             <Image style={styles.image} source={ASSETS.SignUpImage} />
                             <Text style={styles.createText}>Create Account</Text>
                             <Text style={styles.textContainer}>Go Ahead and sign up,let everyone know how awesome you are!</Text>
-                            <View style={styles.profileOuterView}>
-                                {/* <View style={styles.profileView}> */}
-                                <Image style={styles.profileView} source={ASSETS.DefaultProfile} />
-                                <Text style={styles.profileText}>Profile Image</Text>
-                                {/* </View> */}
-                                <View style={styles.profileBtn}>
-                                    <TouchableOpacity style={styles.cameraBtn}><Text style={{ color: "white" }}>Camera</Text></TouchableOpacity>
-                                    <TouchableOpacity style={styles.galleryBtn}><Text style={{ color: "white" }}>Gallery</Text></TouchableOpacity>
+
+                            <TouchableOpacity onPress={toggleModal}>
+                                <View style={styles.profileOuterView}>
+                                    <Image style={styles.profileView} source={values.profileImageUrl ? { uri: values.profileImageUrl } : ASSETS.DefaultProfile} />
+                                    <Text style={styles.profileText}>Profile Image</Text>
                                 </View>
-                            </View>
+                            </TouchableOpacity>
+                            <Modal isVisible={isModalVisible}>
+                                <View style={styles.modalStyle}>
+                                    <View style={styles.profileBtn}>
+                                        <TouchableOpacity style={styles.cameraBtn} onPress={() => onCameraPress(setFieldValue)}><Text style={{ color: "white" }}>Open Camera</Text></TouchableOpacity>
+                                        <TouchableOpacity style={styles.galleryBtn} onPress={() => onImageGalleryClick(setFieldValue)} value={values.profileImageUrl} onChange={(items) => {
+                                            console.log("-----", items)
+                                            setPickerResponse(items);
+                                            setFieldValue('profileImageUrl', items); // Update the dropDownItems array
+                                        }}><Text style={{ color: "white" }}>From Gallery</Text></TouchableOpacity>
+                                    </View>
+
+                                    <TouchableOpacity style={styles.closeModalBtn} onPress={toggleModal}><Text>Close</Text></TouchableOpacity>
+                                </View>
+                            </Modal>
 
 
 
@@ -172,6 +237,38 @@ export function SignUpScreen() {
                                 )}
                             </View>
 
+                            <View style={styles.inputViewPassword}>
+                                <PasswordIcon name="lock" size={27} style={styles.inputIconStyle} />
+                                <Text style={{ color: "#DBE3FF", paddingRight: 5 }}>|</Text>
+                                <TextInput style={{ fontSize: 16, flex: 1 }} placeholder="Password"
+                                    onChangeText={handleChange('password')}
+                                    onBlur={handleBlur('password')}
+                                    autoCapitalize="none"
+                                    secureTextEntry
+                                    textContentType="password"
+                                    value={values.password}></TextInput>
+                            </View>
+                            <View style={{ alignSelf: "flex-start" }}>
+                                {errors.password && touched.password && (
+                                    <Text style={styles.errorStyle}>{errors.password}</Text>
+                                )}
+                            </View>
+
+                            <View style={styles.inputViewCpassword}>
+                                <PasswordIcon name="lock" size={27} style={styles.inputIconStyle} />
+                                <Text style={{ color: "#DBE3FF", paddingRight: 5 }}>|</Text>
+                                <TextInput style={{ fontSize: 16, flex: 1 }} placeholder="Confirm Password"
+                                    onChangeText={handleChange('confirmPassword')}
+                                    onBlur={handleBlur('confirmPassword')}
+                                    secureTextEntry
+                                    value={values.confirmPassword}></TextInput>
+                            </View>
+                            <View style={{ alignSelf: "flex-start" }}>
+                                {errors.confirmPassword && touched.confirmPassword && (
+                                    <Text style={styles.errorStyle}>{errors.confirmPassword}</Text>
+                                )}
+                            </View>
+
                             <View style={styles.inputViewDate}>
                                 <CalenderIcon name="calendar" size={17} style={{ color: "#91A1E1", paddingRight: 5 }} />
                                 {/* <Text style={{ paddingRight: 170, fontSize: 18 }}>{date.toLocaleDateString("en-US")}</Text> */}
@@ -208,38 +305,6 @@ export function SignUpScreen() {
                                 )}
                             </View>
 
-
-                            <View style={styles.inputViewPassword}>
-                                <PasswordIcon name="lock" size={27} style={styles.inputIconStyle} />
-                                <Text style={{ color: "#DBE3FF", paddingRight: 5 }}>|</Text>
-                                <TextInput style={{ fontSize: 16, flex: 1 }} placeholder="Password"
-                                    onChangeText={handleChange('password')}
-                                    onBlur={handleBlur('password')}
-                                    autoCapitalize="none"
-                                    secureTextEntry
-                                    textContentType="password"
-                                    value={values.password}></TextInput>
-                            </View>
-                            <View style={{ alignSelf: "flex-start" }}>
-                                {errors.password && touched.password && (
-                                    <Text style={styles.errorStyle}>{errors.password}</Text>
-                                )}
-                            </View>
-
-                            <View style={styles.inputViewCpassword}>
-                                <PasswordIcon name="lock" size={27} style={styles.inputIconStyle} />
-                                <Text style={{ color: "#DBE3FF", paddingRight: 5 }}>|</Text>
-                                <TextInput style={{ fontSize: 16, flex: 1 }} placeholder="Confirm Password"
-                                    onChangeText={handleChange('confirmPassword')}
-                                    onBlur={handleBlur('confirmPassword')}
-                                    secureTextEntry
-                                    value={values.confirmPassword}></TextInput>
-                            </View>
-                            <View style={{ alignSelf: "flex-start" }}>
-                                {errors.confirmPassword && touched.confirmPassword && (
-                                    <Text style={styles.errorStyle}>{errors.confirmPassword}</Text>
-                                )}
-                            </View>
                             <View style={styles.dropDownContainer}>
 
                                 <MultiSelect

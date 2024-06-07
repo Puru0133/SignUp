@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
         // alignItems: "center",
         textAlign: "center",
         marginBottom: 45,
-        paddingHorizontal: 60,
+        paddingHorizontal: 30,
         letterSpacing: 0.2,
         lineHeight: 20
 
@@ -73,6 +73,21 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         backgroundColor: "#3D66FF"
     },
+    modalStyle: {
+        borderRadius: 15,
+        backgroundColor: "white",
+        paddingBottom : 20
+
+    },
+    closeModalBtn: {
+        borderWidth : 1,
+        marginHorizontal : 140,
+        alignItems : "center",
+        marginTop : 40,
+        paddingVertical : 5,
+        borderRadius : 4
+    },
+
     inputIconStyle: {
         color: "#91A1E1", paddingRight: 5, paddingLeft: 20
     },
@@ -87,7 +102,8 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         marginBottom: 12,
         borderColor: "#DBE3FF",
-        backgroundColor: "white"
+        backgroundColor: "white",
+        flexWrap: "wrap"
     },
     inputViewEmail: {
         flexDirection: "row",
@@ -205,12 +221,12 @@ const styles = StyleSheet.create({
         color: "red",
         // marginLeft: -10,
         paddingBottom: 10,
-        marginLeft : 4
+        marginLeft: 4
     },
     errorOption: {
         color: "red",
         paddingBottom: 10,
-        marginLeft : 6
+        marginLeft: 6
     },
 
     //888888888888888888888888888888888888888888888888888888888
@@ -221,13 +237,15 @@ const styles = StyleSheet.create({
         marginBottom: 12,
         borderRadius: 8,
         paddingVertical: 12,
-        backgroundColor: "white"
+        backgroundColor: "white",
+        paddingRight: 10
     },
     dropdown: {
         backgroundColor: "white",
     },
     placeholderStyle: {
-        fontSize: 12,
+        fontSize: 16,
+        paddingLeft: 20
         // borderWidth: 2,
         //   paddingHorizontal : 120,
         //   paddingVertical : 10,
@@ -241,7 +259,7 @@ const styles = StyleSheet.create({
     iconStyle: {
         width: 20,
         height: 20,
-        borderWidth: 1
+        borderWidth: 1,
     },
     inputSearchStyle: {
         height: 40,

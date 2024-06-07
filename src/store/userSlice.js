@@ -10,7 +10,7 @@ const userSlice = createSlice({
     reducers: {
         userPayload: (state, action) => {
             state.userData.push(action.payload)
-            console.log(state.userData)
+            console.log("///////",state.userData)
         }
     }
 })
