@@ -1,6 +1,6 @@
 export const ASSETS = {
     WelcomeImage: require("./images/welcome.png"),
     SignUpImage: require("./images/signUp.png"),
-    // SignInIcon: require("./images"),
+    SignInImage: require("./images/signIn.png"),
     DefaultProfile: require("./images/defaultProfile.png")
 }

@@ -2,6 +2,8 @@ import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
     userData: [],
+    isSignedIn: true,
+    loggedinUserData: []
 }
 
 const userSlice = createSlice({
@@ -10,10 +12,23 @@ const userSlice = createSlice({
     reducers: {
         userPayload: (state, action) => {
             state.userData.push(action.payload)
-            console.log("///////",state.userData)
-        }
+            // state.isSignedIn = false
+            console.log("///////", state.userData)
+        },
+        // createUserData: (state, action) => {
+        //     state.newUserData = action.payload
+        // },
+        userLoginPayload: (state, action) => {
+            state.loggedinUserData = action.payload
+            console.log("-========================", state.loggedinUserData)
+            state.isSignedIn = false
+        },
+        logoutUser: (state) => {
+            state.isSignedIn = true;
+            state.loggedinUserData = []
+        },
     }
 })
 
-export const { userPayload } = userSlice.actions;
+export const { userPayload, userLoginPayload, logoutUser } = userSlice.actions;
 export default userSlice.reducer

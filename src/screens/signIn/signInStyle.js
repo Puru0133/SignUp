@@ -7,8 +7,6 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         paddingHorizontal: 30,
-        // paddingVertical: 10,
-        // paddingHorizontal: 25
     },
     image: {
         marginBottom: 40,
@@ -18,22 +16,22 @@ const styles = StyleSheet.create({
         marginTop: 35
     },
     welcomeBackText: {
-        fontSize: 35,
+        fontSize: 32,
         marginBottom: 15,
-        // fontWeight : "bold",
         fontFamily: "serif",
-        color: "black"
+        color: "black",
+        fontWeight: "700"
     },
     text: {
         flexDirection: "column",
         alignContent: "center",
         marginBottom: 45,
-        // borderWidth: 1,
-        paddingHorizontal: 40,
+        paddingHorizontal: 22,
         textAlign: "center",
         color: "black",
-        letterSpacing: 0.2,
-        lineHeight: 20
+        letterSpacing: 0.4,
+        lineHeight: 20,
+        fontWeight: "400"
     },
     textContainer: {
         flexDirection: "column",
@@ -43,16 +41,28 @@ const styles = StyleSheet.create({
 
     },
     inputIconStyle: {
-        color: "#91A1E1", paddingRight: 5, paddingLeft: 20
+        color: "#91A1E1",
+        paddingRight: 10,
+        paddingLeft: 20
+    },
+    passwordIconStyle: {
+        color: "#91A1E1",
+        paddingRight: 1,
+        paddingLeft: 16
+    },
+    textLine: {
+        color: "#DBE3FF",
+        paddingRight: 5
+    },
+    inputTextStyle: {
+        flex: 1,
+        fontSize: 16,
     },
     emailInputView: {
         flexDirection: "row",
         alignItems: "center",
         borderWidth: 2,
         paddingVertical: 5,
-        // paddingHorizontal: 40,
-        // paddingLeft: 20,
-        // paddingRight: 100,
         borderRadius: 10,
         marginBottom: 12,
         borderColor: "#DBE3FF",
@@ -63,17 +73,13 @@ const styles = StyleSheet.create({
         alignItems: "center",
         borderWidth: 2,
         paddingVertical: 5,
-        // paddingHorizontal: 40,
-        // paddingLeft: 20,
-        // paddingRight: 100,
         borderRadius: 10,
-        marginBottom: 12,
+        marginBottom: 20,
         borderColor: "#DBE3FF",
-        backgroundColor: "white"
+        backgroundColor: "white",
     },
     errorStyle: {
         color: "red",
-        // marginLeft: -10,
         paddingBottom: 10,
         marginLeft: 4
     },
@@ -81,7 +87,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 142,
         paddingVertical: 20,
         borderRadius: 10,
-        marginBottom: 28
+        marginBottom: 20
     },
     signInText: {
         color: "white"
@@ -95,8 +101,19 @@ const styles = StyleSheet.create({
     },
     forgetText: {
         color: "#2F3C6A"
-    }
+    },
+    errorView: {
+        alignSelf: "flex-start"
+    },
 
 })
 
 export default styles
+
+
+
+
+
+// paddingHorizontal: 40,
+// paddingLeft: 20,
+// paddingRight: 100,

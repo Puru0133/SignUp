@@ -6,9 +6,7 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: "center",
         justifyContent: "center",
-        // paddingVertical: 10,
         paddingHorizontal: 30,
-        // margin : 10
     },
     image: {
         marginBottom: 40,
@@ -18,87 +16,112 @@ const styles = StyleSheet.create({
         marginTop: 35
     },
     createText: {
-        fontSize: 35,
+        fontSize: 32,
         color: "black",
         marginBottom: 15,
-        // fontWeight : "bold",
-        fontFamily: "serif"
+        fontFamily: "serif",
+        fontWeight: "700"
     },
     textContainer: {
         color: "black",
-        // alignItems: "center",
         textAlign: "center",
         marginBottom: 45,
         paddingHorizontal: 30,
         letterSpacing: 0.2,
-        lineHeight: 20
+        lineHeight: 20,
+        letterSpacing: 0.4,
+        fontWeight: "400"
 
     },
     profileOuterView: {
         paddingBottom: 20,
         paddingHorizontal: 82,
-        marginBottom: 12,
     },
     profileView: {
         borderWidth: 1,
         height: 160,
         width: 160,
-        // padding: 82,
-        // borderRadius: 41,
         backgroundColor: "white",
         borderRadius: 80
     },
     profileText: {
         color: "black",
         fontSize: 20,
-        paddingLeft: 20
+        paddingLeft: 12,
+        marginBottom: 20
     },
     profileBtn: {
         flexDirection: "row",
-        justifyContent: "space-around",
+        justifyContent: "space-evenly",
         paddingHorizontal: 2,
-        marginTop: 20,
+        marginTop: 40,
     },
     cameraBtn: {
-        borderWidth: 1,
         paddingVertical: 13,
-        paddingHorizontal: 10,
-        borderRadius: 20,
+        paddingHorizontal: 14,
+        borderRadius: 10,
         backgroundColor: "#3D66FF"
     },
     galleryBtn: {
-        borderWidth: 1,
         paddingVertical: 15,
-        paddingHorizontal: 13,
-        borderRadius: 20,
+        paddingHorizontal: 17,
+        borderRadius: 10,
         backgroundColor: "#3D66FF"
     },
+    openCameraText: {
+        color: "white"
+    },
+
     modalStyle: {
         borderRadius: 15,
         backgroundColor: "white",
-        paddingBottom : 20
+        paddingBottom: 20
 
     },
     closeModalBtn: {
-        borderWidth : 1,
-        marginHorizontal : 140,
-        alignItems : "center",
-        marginTop : 40,
-        paddingVertical : 5,
-        borderRadius : 4
+        top: 10,
+        right: 20,
+        position: "absolute",
+        marginBottom : 10
+    },
+    closeModalText: {
+        color: "black",
+        fontSize: 18,
+        fontWeight: "bold"
     },
 
     inputIconStyle: {
-        color: "#91A1E1", paddingRight: 5, paddingLeft: 20
+        color: "#91A1E1",
+        paddingRight: 5,
+        paddingLeft: 20
+    },
+    passwordIconStyle: {
+        paddingLeft: 18,
+        color: "#91A1E1",
+        paddingRight: 1
+    },
+    emailIconStyle: {
+        paddingLeft: 21,
+        color: "#91A1E1",
+        paddingRight: 6
+    },
+    inputTextStyle: {
+        flex: 1,
+        fontSize: 16,
+    },
+    textLine: {
+        color: "#DBE3FF",
+        paddingRight: 5
+    },
+    passwordTextLine: {
+        color: "#DBE3FF",
+        paddingRight: 5
     },
     inputViewUser: {
         flexDirection: "row",
         alignItems: "center",
         borderWidth: 2,
         paddingVertical: 5,
-        // paddingHorizontal: 40,
-        // paddingLeft: 20,
-        // paddingRight: 100,
         borderRadius: 10,
         marginBottom: 12,
         borderColor: "#DBE3FF",
@@ -110,9 +133,6 @@ const styles = StyleSheet.create({
         alignItems: "center",
         borderWidth: 2,
         paddingVertical: 5,
-        // paddingHorizontal: 141,
-        // paddingLeft: 20,
-        // paddingRight: 233,
         borderRadius: 10,
         marginBottom: 12,
         borderColor: "#DBE3FF",
@@ -123,9 +143,6 @@ const styles = StyleSheet.create({
         alignItems: "center",
         borderWidth: 2,
         paddingVertical: 5,
-        // paddingHorizontal: 127,
-        // paddingLeft: 12,
-        // paddingRight: 206,
         borderRadius: 10,
         marginBottom: 12,
         borderColor: "#DBE3FF",
@@ -136,9 +153,6 @@ const styles = StyleSheet.create({
         alignItems: "center",
         borderWidth: 2,
         paddingVertical: 5,
-        // paddingHorizontal: 100,
-        // paddingLeft: 12,
-        // paddingRight: 130,
         borderRadius: 10,
         marginBottom: 12,
         borderColor: "#DBE3FF",
@@ -149,9 +163,8 @@ const styles = StyleSheet.create({
         alignItems: "center",
         borderWidth: 2,
         paddingVertical: 6,
-        // paddingHorizontal: 100,
-        paddingLeft: 16,
-        paddingRight: 28,
+        paddingLeft: 2,
+        paddingRight: 40,
         borderRadius: 10,
         marginBottom: 12,
         borderColor: "#DBE3FF",
@@ -162,11 +175,14 @@ const styles = StyleSheet.create({
         paddingRight: 125,
         textDecorationLine: "underline"
     },
+    dateIconColor: {
+        color: "#91A1E1"
+    },
     createBtn: {
         paddingHorizontal: 115,
         paddingVertical: 20,
         borderRadius: 10,
-        marginBottom: 28,
+        marginBottom: 20,
     },
     createBtnText: {
         color: "white"
@@ -182,19 +198,25 @@ const styles = StyleSheet.create({
         color: "#2F3C6A"
     },
 
+    //888888888888888888888888888888  RADIO BUTTON
 
     radioView: {
         flexDirection: "row",
         alignContent: "center",
         borderWidth: 2,
-        paddingVertical: 14,
-        // paddingHorizontal: 24,
-        paddingRight: 20,
-        paddingLeft: 15,
+        paddingVertical: 12,
+        paddingRight: 18,
+        paddingLeft: 10,
         borderRadius: 10,
-        marginBottom: 28,
+        marginBottom: 20,
         borderColor: "#DBE3FF",
         backgroundColor: "white"
+    },
+    radioBtnView: {
+        flexDirection: 'row',
+        margin: 10,
+        marginRight: 4
+
     },
     radioText: {
         fontSize: 15,
@@ -209,6 +231,17 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
+    genderText: {
+        fontSize: 15,
+        fontWeight: 'bold',
+        paddingTop: 10,
+        paddingRight: 5
+    },
+    radioLineText: {
+        color: "#DBE3FF",
+        paddingTop: 10,
+        paddingRight: 5
+    },
     radioInner: {
         width: 14,
         height: 14,
@@ -217,26 +250,32 @@ const styles = StyleSheet.create({
         borderColor: 'blue',
         backgroundColor: "#3D66FF"
     },
+
+    //888888888888888888888888888888  ERROR
+
+    errorView: {
+        alignSelf: "flex-start"
+    },
     errorStyle: {
         color: "red",
-        // marginLeft: -10,
         paddingBottom: 10,
         marginLeft: 4
     },
     errorOption: {
         color: "red",
+        marginTop: -15,
         paddingBottom: 10,
         marginLeft: 6
     },
 
-    //888888888888888888888888888888888888888888888888888888888
+    //888888888888888888888888888888  DROP DOWN CONTAINER
     dropDownContainer: {
         borderWidth: 2,
         borderColor: "#DBE3FF",
-        width: Dimensions.get("screen").width - 60,
+        width: Dimensions.get("screen").width - 64,
         marginBottom: 12,
         borderRadius: 8,
-        paddingVertical: 12,
+        paddingVertical: 11,
         backgroundColor: "white",
         paddingRight: 10
     },
@@ -246,15 +285,10 @@ const styles = StyleSheet.create({
     placeholderStyle: {
         fontSize: 16,
         paddingLeft: 20
-        // borderWidth: 2,
-        //   paddingHorizontal : 120,
-        //   paddingVertical : 10,
     },
     selectedTextStyle: {
         fontSize: 14,
         width: Dimensions.get("screen").width - 60,
-        // borderWidth: 1
-        //   paddingLeft : 400
     },
     iconStyle: {
         width: 20,

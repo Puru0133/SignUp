@@ -15,37 +15,43 @@ import { useCallback, useState } from "react";
 import { useNavigation } from '@react-navigation/native';
 import { MultiSelect } from 'react-native-element-dropdown';
 import { useDispatch, useSelector } from "react-redux";
-import { userPayload } from "../../store/userSlice";
+import { userLoginPayload, userPayload } from "../../store/userSlice";
 import Modal from "react-native-modal";
 import * as ImagePicker from 'react-native-image-picker';
+import { PLACEHOLDER_CONSTANTS } from "../../constants/constants";
+import { SUBJECT_CONTANTS } from "../../constants/constants";
+import { GENDER_CONSTANTS } from "../../constants/constants";
+import { CONSTANTS } from "../../constants/constants";
+import { ICON_CONSTANTS } from "../../constants/constants";
+import TextInputFunction from "../../components/components";
 
 
 const genderData = [
     {
         id: 1,
-        value: "Male",
+        value: GENDER_CONSTANTS.Male,
     },
     {
         id: 2,
-        value: "Female",
+        value: GENDER_CONSTANTS.Female,
     },
     {
         id: 3,
-        value: "Others",
+        value: GENDER_CONSTANTS.Others,
     },
 
 ];
 
 const dropDownData = [
-    { label: "Mathematics", value: "1" },
-    { label: "Physics", value: "2" },
-    { label: "Biology", value: "3" },
-    { label: "Chemistry", value: "4" },
-    { label: "Geography", value: "5" },
-    { label: "Civics", value: "6" },
-    { label: "History", value: "7" },
-    { label: "Punjabi", value: "8" },
-    { label: "Hindi", value: "9" },
+    { label: SUBJECT_CONTANTS.Mathematics, value: "1" },
+    { label: SUBJECT_CONTANTS.Physics, value: "2" },
+    { label: SUBJECT_CONTANTS.Biology, value: "3" },
+    { label: SUBJECT_CONTANTS.Chemistry, value: "4" },
+    { label: SUBJECT_CONTANTS.Geography, value: "5" },
+    { label: SUBJECT_CONTANTS.Civics, value: "6" },
+    { label: SUBJECT_CONTANTS.History, value: "7" },
+    { label: SUBJECT_CONTANTS.Punjabi, value: "8" },
+    { label: SUBJECT_CONTANTS.Hindi, value: "9" },
 
 ]
 
@@ -59,7 +65,6 @@ export function SignUpScreen({ route }) {
     const newUserEmail = route?.params?.newUserEmail
 
     const initialEmail = newUserEmail?.loginEmail ? newUserEmail?.loginEmail : ''
-    // console.log(newUserEmail?.loginEmail)
 
     const usersData = useSelector(state => state.userData)
 
@@ -71,7 +76,7 @@ export function SignUpScreen({ route }) {
     };
 
     function signInPage() {
-        navigation.navigate("SignIn")
+        navigation.navigate(CONSTANTS.SignInScreen)
     }
     const emailExists = (email) => {
         return usersData.find(users => users.email === email)
@@ -100,6 +105,7 @@ export function SignUpScreen({ route }) {
                 let imageUri = res.uri || res.assets?.[0]?.uri;
                 setPickerResponse(imageUri);
                 setFieldValue('profileImageUrl', imageUri);
+                setModalVisible(false)
             }
         });
     }, []);
@@ -120,6 +126,7 @@ export function SignUpScreen({ route }) {
                 let imageUri = res.uri || res.assets?.[0]?.uri;
                 setPickerResponse(imageUri);
                 setFieldValue('profileImageUrl', imageUri);
+                setModalVisible(false);
             }
         });
     }, []);
@@ -127,15 +134,19 @@ export function SignUpScreen({ route }) {
 
 
     const validateSchema = Yup.object().shape({
-        firstName: Yup.string().required('FirstName is Required').label('FirstName'),
-        lastName: Yup.string().optional('Name is Required').label('Name'),
+        firstName: Yup.string().required('FirstName is Required').label('FirstName')
+            .matches(/^[a-zA-Z]{3,}$/, 'First Name must contain at least three characters'),
+        lastName: Yup.string().optional('Name is Required').label('Name')
+            .matches(/^[a-zA-Z]{3,}$/, 'First Name must contain at least three characters'),
         email: Yup.string().email('Please enter valid email').required("Email is Required").label('email')
             .test('email-exists', 'User is already existing', (value) => !emailExists(value)),
-        password: Yup.string().matches(/\w*[a-z]\w*/, 'Password must have a small letter')
-            .matches(/\w*[A-Z]\w*/, 'Password must have a capital letter')
-            .matches(/\d/, "Password must have a number")
+        password: Yup.string().matches(/[a-z]/, 'Password must have a small letter')
+            .matches(/[A-Z]/, 'Password must have a capital letter')
+            .matches(/\d/, 'Password must have a number')
+            .matches(/[!@#$%^&*(),.?":{}|<>]/, 'Password must have at least one special character')
             .min(8, ({ min }) => `Password must be at least ${min} characters`)
-            .required('Password is Required').label('Password'),
+            .required('Password is Required')
+            .label('Password'),
         confirmPassword: Yup.string()
             .oneOf([Yup.ref('password')], 'Passwords must match')
             .required('Confirm Password is Required')
@@ -143,18 +154,22 @@ export function SignUpScreen({ route }) {
         checkBox: Yup.bool().oneOf([true], 'You must agree to the terms and conditions'),
         option: Yup.string().required('Select One Option'),
         DOB: Yup.string().required("Select Date").label("Date"),
-        dropDownItems: Yup.mixed().test(2, "Must have at least one checked", value => value.length >= 2)
+        dropDownItems: Yup.mixed().test(2, "Must have at least two selected", value => value.length >= 2)
     })
 
     return (
         <Formik
             initialValues={{ firstName: '', lastName: '', email: initialEmail, password: '', confirmPassword: '', option: '', DOB: '', dropDownItems: [], profileImageUrl: '' }}
             validationSchema={validateSchema}
-            onSubmit={values => dispatch(userPayload(values))}>
+            onSubmit={(values, { resetForm }) => {
+                dispatch(userPayload(values)),
+                    dispatch(userLoginPayload([values]))
+                    , resetForm()
+            }}>
             {({
                 handleChange, handleBlur, handleSubmit, values, errors, touched, setFieldValue
             }) => {
-                // console.log({ errors })
+                // console.log("values----------", values)
                 return (
 
                     <ScrollView>
@@ -166,36 +181,58 @@ export function SignUpScreen({ route }) {
                             <TouchableOpacity onPress={toggleModal}>
                                 <View style={styles.profileOuterView}>
                                     <Image style={styles.profileView} source={values.profileImageUrl ? { uri: values.profileImageUrl } : ASSETS.DefaultProfile} />
-                                    <Text style={styles.profileText}>Profile Image</Text>
                                 </View>
                             </TouchableOpacity>
+                            <Text style={styles.profileText}>Profile Image</Text>
                             <Modal isVisible={isModalVisible}>
                                 <View style={styles.modalStyle}>
+                                    <TouchableOpacity style={styles.closeModalBtn} onPress={toggleModal}><Text style={styles.closeModalText}>X</Text></TouchableOpacity>
                                     <View style={styles.profileBtn}>
-                                        <TouchableOpacity style={styles.cameraBtn} onPress={() => onCameraPress(setFieldValue)}><Text style={{ color: "white" }}>Open Camera</Text></TouchableOpacity>
-                                        <TouchableOpacity style={styles.galleryBtn} onPress={() => onImageGalleryClick(setFieldValue)} value={values.profileImageUrl} onChange={(items) => {
-                                            console.log("-----", items)
-                                            setPickerResponse(items);
-                                            setFieldValue('profileImageUrl', items); // Update the dropDownItems array
-                                        }}><Text style={{ color: "white" }}>From Gallery</Text></TouchableOpacity>
-                                    </View>
 
-                                    <TouchableOpacity style={styles.closeModalBtn} onPress={toggleModal}><Text>Close</Text></TouchableOpacity>
+                                        <TouchableOpacity style={styles.cameraBtn} onPress={() => onCameraPress(setFieldValue)}><Text style={styles.openCameraText}>Open Camera</Text></TouchableOpacity>
+                                        <TouchableOpacity style={styles.galleryBtn} onPress={() => onImageGalleryClick(setFieldValue)} value={values.profileImageUrl} onChange={(items) => {
+                                            setPickerResponse(items);
+                                            setFieldValue('profileImageUrl', items);
+                                        }}><Text style={styles.openCameraText}>From Gallery</Text></TouchableOpacity>
+                                    </View>
                                 </View>
                             </Modal>
+                            <TextInputFunction name={ICON_CONSTANTS.UserIcon} size={19} placeholder={PLACEHOLDER_CONSTANTS.FirstName}
+                                onChangeText={handleChange("firstName")} onBlur={handleBlur('firstName')} value={values.firstName} autoCorrect={false}
+                                errorName={firstName} />
+
+                            <TextInputFunction renderLeftIcon={() => (
+                                <Icon name={ICON_CONSTANTS.UserIcon} size={19} color='red' />
+                            )} placeholder={PLACEHOLDER_CONSTANTS.LastName}
+                                onChangeText={handleChange("lastName")} onBlur={handleBlur('lastName')} value={values.lastName} autoCorrect={false}
+                                errorName={lastName} />
+
+                            <TextInputFunction name={ICON_CONSTANTS.EmailIcon} size={19} placeholder={PLACEHOLDER_CONSTANTS.Email}
+                                onChangeText={handleChange("email")} onBlur={handleBlur('email')} autoCapitalise={"none"} autoComplete={"email"}
+                                keyBoardType={"email-address"} textContentType={"emailAddress"} value={values.firstName} autoCorrect={false}
+                                errorName={email} />
+
+                            <TextInputFunction name={ICON_CONSTANTS.PasswordIcon} size={19} placeholder={PLACEHOLDER_CONSTANTS.Password}
+                                onChangeText={handleChange("password")} onBlur={handleBlur('password')} autoCapitalise={"none"}
+                                textContentType={password} secuteTextENtry={false} value={values.password} autoCorrect={false}
+                                errorName={password} />
+
+                            <TextInputFunction name={ICON_CONSTANTS.PasswordIcon} size={19} placeholder={PLACEHOLDER_CONSTANTS.ConfirmPassword}
+                                onChangeText={handleChange("confirmPassword")} onBlur={handleBlur('confirmPassword')} secuteTextEntry={false}
+                                value={values.confirmPassword} autoCorrect={false} errorName={confirmPassword} />
 
 
 
-                            <View style={styles.inputViewUser}>
-                                <UserIcon name="user" size={19} style={{ color: "#91A1E1", paddingRight: 5, paddingLeft: 20 }} />
-                                <Text style={{ color: "#DBE3FF", paddingRight: 5 }}>|</Text>
-                                <TextInput style={{ fontSize: 16, flex: 1 }} placeholder="FirstName" onChangeText={handleChange('firstName')}
+                            {/* <View style={styles.inputViewUser}>
+                                <UserIcon name={ICON_CONSTANTS.UserIcon} size={19} style={styles.inputIconStyle} />
+                                <Text style={styles.textLine}>|</Text>
+                                <TextInput style={styles.inputTextStyle} placeholder={PLACEHOLDER_CONSTANTS.FirstName} onChangeText={handleChange('firstName')}
                                     onBlur={handleBlur('firstName')}
                                     value={values.firstName}
                                     autoCorrect={false}></TextInput>
                             </View>
 
-                            <View style={{ alignSelf: "flex-start" }}>
+                            <View style={styles.errorView}>
                                 {errors.firstName && touched.firstName && (
                                     <Text style={styles.errorStyle}>{errors.firstName}</Text>
                                 )}
@@ -204,14 +241,14 @@ export function SignUpScreen({ route }) {
 
 
                             <View style={styles.inputViewUser}>
-                                <UserIcon name="user" size={19} style={styles.inputIconStyle} />
-                                <Text style={{ color: "#DBE3FF", paddingRight: 5 }}>|</Text>
-                                <TextInput style={{ fontSize: 16, flex: 1 }} placeholder="LastName" onChangeText={handleChange('lastName')}
+                                <UserIcon name={ICON_CONSTANTS.UserIcon} size={19} style={styles.inputIconStyle} />
+                                <Text style={styles.textLine}>|</Text>
+                                <TextInput style={styles.inputTextStyle} placeholder={PLACEHOLDER_CONSTANTS.LastName} onChangeText={handleChange('lastName')}
                                     onBlur={handleBlur('lastName')}
                                     value={values.lastName}
                                     autoCorrect={false}></TextInput>
                             </View>
-                            <View style={{ alignSelf: "flex-start" }}>
+                            <View style={styles.errorView}>
                                 {errors.lastName && touched.lastName && (
                                     <Text style={styles.errorStyle}>{errors.lastName}</Text>
                                 )}
@@ -219,9 +256,9 @@ export function SignUpScreen({ route }) {
 
 
                             <View style={styles.inputViewEmail}>
-                                <EmailIcon name="mail" size={18} style={styles.inputIconStyle} />
-                                <Text style={{ color: "#DBE3FF", paddingRight: 5 }}>|</Text>
-                                <TextInput style={{ fontSize: 16, flex: 1 }} placeholder="Email" onChangeText={handleChange('email')}
+                                <EmailIcon name={ICON_CONSTANTS.EmailIcon} size={18} style={styles.emailIconStyle} />
+                                <Text style={styles.textLine}>|</Text>
+                                <TextInput style={styles.inputTextStyle} placeholder={PLACEHOLDER_CONSTANTS.Email} onChangeText={handleChange('email')}
                                     onBlur={handleBlur('email')}
                                     autoCapitalize="none"
                                     autoComplete="email"
@@ -231,16 +268,16 @@ export function SignUpScreen({ route }) {
                                     value={values.email}></TextInput>
 
                             </View>
-                            <View style={{ alignSelf: "flex-start" }}>
+                            <View style={styles.errorView}>
                                 {errors.email && touched.email && (
                                     <Text style={styles.errorStyle}>{errors.email}</Text>
                                 )}
                             </View>
 
                             <View style={styles.inputViewPassword}>
-                                <PasswordIcon name="lock" size={27} style={styles.inputIconStyle} />
-                                <Text style={{ color: "#DBE3FF", paddingRight: 5 }}>|</Text>
-                                <TextInput style={{ fontSize: 16, flex: 1 }} placeholder="Password"
+                                <PasswordIcon name={ICON_CONSTANTS.PasswordIcon} size={27} style={styles.passwordIconStyle} />
+                                <Text style={styles.textLine}>|</Text>
+                                <TextInput style={styles.inputTextStyle} placeholder={PLACEHOLDER_CONSTANTS.Password}
                                     onChangeText={handleChange('password')}
                                     onBlur={handleBlur('password')}
                                     autoCapitalize="none"
@@ -248,58 +285,50 @@ export function SignUpScreen({ route }) {
                                     textContentType="password"
                                     value={values.password}></TextInput>
                             </View>
-                            <View style={{ alignSelf: "flex-start" }}>
+                            <View style={styles.errorView}>
                                 {errors.password && touched.password && (
                                     <Text style={styles.errorStyle}>{errors.password}</Text>
                                 )}
                             </View>
 
                             <View style={styles.inputViewCpassword}>
-                                <PasswordIcon name="lock" size={27} style={styles.inputIconStyle} />
-                                <Text style={{ color: "#DBE3FF", paddingRight: 5 }}>|</Text>
-                                <TextInput style={{ fontSize: 16, flex: 1 }} placeholder="Confirm Password"
+                                <PasswordIcon name={ICON_CONSTANTS.PasswordIcon} size={27} style={styles.passwordIconStyle} />
+                                <Text style={styles.textLine}>|</Text>
+                                <TextInput style={styles.inputTextStyle} placeholder={PLACEHOLDER_CONSTANTS.ConfirmPassword}
                                     onChangeText={handleChange('confirmPassword')}
                                     onBlur={handleBlur('confirmPassword')}
                                     secureTextEntry
                                     value={values.confirmPassword}></TextInput>
                             </View>
-                            <View style={{ alignSelf: "flex-start" }}>
+                            <View style={styles.errorView}>
                                 {errors.confirmPassword && touched.confirmPassword && (
                                     <Text style={styles.errorStyle}>{errors.confirmPassword}</Text>
                                 )}
-                            </View>
+                            </View> */}
 
-                            <View style={styles.inputViewDate}>
-                                <CalenderIcon name="calendar" size={17} style={{ color: "#91A1E1", paddingRight: 5 }} />
-                                {/* <Text style={{ paddingRight: 170, fontSize: 18 }}>{date.toLocaleDateString("en-US")}</Text> */}
-                                <Text style={{ color: '#E5E8FC', paddingRight: 5 }}>|</Text>
+                            {/* <View style={styles.inputViewDate}>
+                                <CalenderIcon name={ICON_CONSTANTS.CalendersIcon} size={17} style={styles.inputIconStyle} />
+                                <Text style={styles.textLine}>|</Text>
                                 <TextInput
-                                    placeholder='DD/MM/YYYY'
+                                    placeholder={PLACEHOLDER_CONSTANTS.DateFormat}
                                     style={styles.inputDateText}
                                     value={values.DOB}
                                     editable={false}
                                 />
                                 <TouchableOpacity onPress={() => setOpen(true)}>
-                                    <DateIcon name="date" size={22} style={{ color: "#91A1E1" }} />
+                                    <DateIcon name="date" size={22} style={styles.dateIconColor} />
                                 </TouchableOpacity>
                                 <DatePicker
                                     modal
                                     open={open}
                                     date={date}
-                                    mode="date"
+                                    mode={ICON_CONSTANTS.DateIcon}
                                     dateFormat="YYYY-MM-DD"
-                                    // onConfirm={(date) => {
-                                    //     setOpen(false)
-                                    //     setDate(date)
-                                    // }}
-                                    // onCancel={() => {
-                                    //     setOpen(false)
-                                    // }}
                                     onConfirm={(selectDate) => handleConfirm(selectDate, setFieldValue)}
                                     onCancel={() => setOpen(false)}
                                 />
                             </View>
-                            <View style={{ alignSelf: "flex-start" }}>
+                            <View style={styles.errorView}>
                                 {errors.DOB && touched.DOB && (
                                     <Text style={styles.errorStyle}>{errors.DOB}</Text>
                                 )}
@@ -310,53 +339,38 @@ export function SignUpScreen({ route }) {
                                 <MultiSelect
                                     style={styles.dropdown}
                                     placeholderStyle={styles.placeholderStyle}
-                                    // selectedTextStyle={styles.selectedTextStyle}
-                                    // inputSearchStyle={styles.inputSearchStyle}
-                                    // iconStyle={styles.iconStyle}
                                     search
                                     data={dropDownData}
                                     labelField="label"
                                     valueField="value"
-                                    placeholder="Select item"
+                                    placeholder={PLACEHOLDER_CONSTANTS.DropDownSelect}
                                     searchPlaceholder="Search..."
                                     value={selected}
-                                    // onChange={item => {
-                                    //     setSelected(item);
-                                    // }}
                                     onChange={(items) => {
-                                        console.log("-----", items)
                                         setSelected(items);
-                                        setFieldValue('dropDownItems', items); // Update the dropDownItems array
+                                        setFieldValue('dropDownItems', items);
                                     }}
 
-                                    // renderLeftIcon={() => (
-                                    //     <AntDesign
-                                    //         style={styles.icon}
-                                    //         color="black"
-                                    //         name="Safety"
-                                    //         size={20}
-                                    //     />
-                                    // )}
                                     selectedStyle={styles.selectedStyle}
                                 />
                             </View>
-                            <View style={{ alignSelf: "flex-start" }}>
+                            <View style={styles.errorView}>
                                 {errors.dropDownItems && touched.dropDownItems && (
                                     <Text style={styles.errorStyle}>{errors.dropDownItems}</Text>
                                 )}
                             </View>
 
                             <View style={styles.radioView}>
-                                <Text style={{ fontSize: 15, fontWeight: 'bold', paddingTop: 8, paddingRight: 5 }}>Gender</Text>
-                                <Text style={{ color: "#DBE3FF", paddingTop: 10, paddingRight: 5 }}>|</Text>
+                                <Text style={styles.genderText}>{PLACEHOLDER_CONSTANTS.Gender}</Text>
+                                <Text style={styles.radioLineText}>|</Text>
                                 <View style={{ flexDirection: 'row' }}>
                                     {genderData.map((item, index) => (
                                         <View style={{ flexDirection: 'row' }} key={index}>
                                             <TouchableOpacity onPress={() => {
                                                 setSelectedRadio(item.id);
-                                                setFieldValue('option', item.value); // Update Formik value
+                                                setFieldValue('option', item.value);
                                             }}>
-                                                <View style={{ flexDirection: 'row', margin: 10, marginRight: 4 }}>
+                                                <View style={styles.radioBtnView}>
                                                     <View style={styles.radio}>
                                                         {
                                                             selectedRadio === item.id ? <View style={styles.radioInner}></View> : null
@@ -369,7 +383,7 @@ export function SignUpScreen({ route }) {
                                     ))}
                                 </View>
                             </View>
-                            <View style={{ alignSelf: "flex-start" }}>
+                            <View style={styles.errorView}>
                                 {touched.option && errors.option && (
                                     <Text style={styles.errorOption}>{errors.option}</Text>
                                 )}
@@ -382,7 +396,7 @@ export function SignUpScreen({ route }) {
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.accountBtn} onPress={signInPage}>
                                 <Text style={styles.accountText}>I already have an account</Text>
-                            </TouchableOpacity>
+                            </TouchableOpacity> */}
                         </LinearGradient>
                     </ScrollView>
                 )
@@ -403,6 +417,8 @@ export function SignUpScreen({ route }) {
 
 
 
-
+// selectedTextStyle={styles.selectedTextStyle}
+// inputSearchStyle={styles.inputSearchStyle}
+// iconStyle={styles.iconStyle}
 
 
